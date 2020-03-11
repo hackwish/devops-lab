@@ -1,0 +1,44 @@
+#docker-compose.yml
+version: '2'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce
+    hostname: 'gitlab-dev'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab-dev:8090'
+    #     gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '8090:8090'
+      - '4430:443'
+      # - '2290:22'
+      # - '4567:4567'
+    # depends_on:
+    #   - gitlabrunner
+
+  gitlabrunner:
+    image: gitlab/gitlab-runner
+    # privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- ./config.toml:/etc/gitlab-runner/config.toml
+#    command: gitlab-runner register -n --url http://gitlab-tmsdev.sodimac.com:1000 --registration-token R1K6c9fNLYN5XCarcEwV --clone-url http://gitlab-tmsdev.sodimac.com:1000 --executor docker --docker-image "docker:latest" --docker-privileged
+    # links:
+    #   - gitlab:gitlab-dev
+    #   - registry:registry-dev
+    # extra_hosts:
+    #   - "gitlab-tmsdev.sodimac.com:172.18.0.3"
+
+  # terraform:
+  #   image: hashicorp/terraform:light
+  #   command: terraform plan 
+
+  registry:
+    image: registry:2
+    hostname: 'registry'
+    ports:
+      - '5000:5000'
+    # depends_on:
+    #   - gitlabrunner
+
